@@ -1,42 +1,108 @@
-// --- cube v1.5 -- Soldat team balancer by fri -----[ CONFIG ]-------------------------------------------------------------
+// --- cube v1.6 --- advanced Soldat team balancer by fri [ http://oko.im ]
 
 const
+// -------------------------------------------------------------------------------------------------------------------------
+// ----------[ CONFIG STARTS HERE ]-----------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------------------
 
-	// booleans
-	CheckOnLeave  = false;    // check balance when someone leaves the server? default: false, because it would occur too often on public servers
-	KeepTeamScore = false;    // restore team's score after all its players leave? (Soldat clears it by default)  default: false
+// --------------------------------------------------
+// CheckOnLeave:  true or false
+//     If true, cube will check balance when someone leaves the server.
+//     Default: false (because it would balance too often on public servers)
+CheckOnLeave = false;
 
+// --------------------------------------------------
+// KeepTeamScore:  true or false
+//     If true, cube will restore team's score after all its players leave (Soldat clears it by default).
+//     Default: false
+KeepTeamScore = false;
 
-	// usage limiters
-	SwapLimit    = 2;         // maximum number of swaps per map; 0 = unlimited;  default: 2
-	TriggerLimit = 2;         // maximum number of team-changing trigger uses (!alpha, !2, etc.). affects ONLY the built-in triggers, so changing the team
-	                          // through the Esc-menu isn't limited. resets after map change. -1 = disable triggers completely; 0 = no limit;  default: 2
+// --------------------------------------------------
+// SwapCountsFlags:  true or false
+//     If true, player's captures are counted, and players with one or more caps are not preferred during choosing.
+//     If false, automatic swap will ignore number of caps the chosen player has, and just choose whoever fits the balance.
+//     Default: false
+SwapCountsFlags = false;
 
-	// time-related
-	Interval   = 3;           // minutes; balance triggers if last one was X minutes ago; 0 to disable;  default: 3
-	ImmuneTime = 20;          // minutes; time of immunity, during which the previously moved player won't be moved again; 0 to disable;  default: 20
-	LockTime   = 2;           // minutes; during this time the moved player can't change the team again (except spect team); 0 to disable;  default: 2
+// --------------------------------------------------
+// SwapLimit:  non-negative integer
+//     Specifies the maximum number of swaps per map. If it's reached and current status would result in another swap,
+//     cube will say that teams are balanced. Set 0 for unlimited swaps.
+//     Default: 2
+SwapLimit = 2;
 
+// --------------------------------------------------
+// TriggerLimit:  integer
+//     Specifies the maximum number of team-changing trigger uses (e.g. !alpha, !2). Only affects the built-in triggers,
+//     so using the Esc-menu isn't limited. Resets after map change. Set -1 to disable those triggers. Set 0 for no limits.
+//     Default: 2
+TriggerLimit = 2;
 
-	// other
-	Method = 7;               // method of choosing players.  1: random,  2: fewest kills,  3: fewest caps,  4: worst k/d ratio,
-	                          // 5: fewest kills and no caps,  6: worst k/d and no caps,  7: random player with no caps.  default: 7
+// --------------------------------------------------
+// Interval:  non-negative integer
+//     Time in minutes between automatic balance checks. If someone manually requested the balance check, timer is reset.
+//     Set 0 to disable automatic balance checks.
+//     Default: 3
+Interval = 3;
 
-	ColorGreen = $FFAAFFAA;   // "good" messages' color. default: $FFAAFFAA
-	ColorMsg   = $FFF8F35A;   // color for private messages ("you were moved...", "swapped teams with...", etc.). default: $FFF8F35A
-	ColorRed   = $FFFFAAAA;   // "bad" messages' color.  default: $FFFFAAAA
+// --------------------------------------------------
+// ImmuneTime:  non-negative integer
+//     Time in minutes, specifying the immunity from cube. The player won't be moved again during this time, except it's
+//     really necessary (e.g. all other players have been moved recently). Set 0 to disable immunity time. Bad idea.
+//     Default: 20
+ImmuneTime = 20;
 
+// --------------------------------------------------
+// LockTime:  non-negative integer
+//     Time in minutes, during which the recently moved player can't change the team again. They still can go to spec, or
+//     join the weaker team out of their own will. It just won't let them go back to the stronger team. Set 0 to disable.
+//     Default: 2
+LockTime = 2;
 
-	// nick/HWID exclusion
-	Exclusion = 2;            // 0: disabled  |  1: nick exclusion  |  2: hardware ID exclusion  |  default: 2
-	Nicks = 'Dutch; Terminator; Commando; Sgt. Mac';
-	HWIDs = '2B6D3D6C7B9; 7C0505C3BFB; BFDCAA9C57D';
+// --------------------------------------------------
+// Method:  integer in range 1..7
+//     Specifies the default method of choosing players to move. Possible options:
+//     1: Completely random player.       2: Player with fewest kills.                3: Player with fewest caps.
+//     4: Player with worst K/D ratio.    5: Player with fewest kills and no caps.    6: Player with worst K/D and no caps.
+//     7: Random player with no caps.
+//     Default: 5
+Method = 5;
+
+// --------------------------------------------------
+// Colors:  longint
+//     Color of messages spit out by cube.
+//     ColorGreen: Good messages. Default: $FFAAFFAA
+//     ColorRed: Bad messages.    Default: $FFFFAAAA
+//     ColorMsg: Notifications.   Default: $FFF8F35A
+ColorGreen = $FFAAFFAA;
+ColorRed   = $FFFFAAAA;
+ColorMsg   = $FFF8F35A;
+
+// --------------------------------------------------
+// Nickname and HardwareID exclusion
+//     Players can be excluded from cube's reach, which makes them immune to balance all the time. They can also use
+//     triggers without limits and join any team they want. This section specifies who to exclude.
+//     You can also use [ /exclude ID ] or [ /exclude nickname ] command to exclude someone until they leave the server.
+//     To get someone's HardwareID, use [ /hwid ID ] or [ /hwid nickname ]. Nicknames are case-sensitive in those commands.
+// --
+// Exclusion:  integer in range 0..2
+//     Specifies the type of exclusion. Possible options:
+//     0: Exclusion is disabled.    1: Exclusion based on nicknames.    2: Exclusion based on HardwareID.
+//     Default: 1
+Exclusion = 1;
+
+// Insert multiple nicknames or HWIDs to exclude by separating them with "; " - semicolon and space. Semicolon AND space.
+// Don't forget to put the semicolon at the very end of the line, too.
+//     Default:  Nicks = 'Dutch; fri; rr-';
+//               HWIDs = '2B6D3D6C7B9; 7C0505C3BFB; BFDCAA9C57D';
+Nicks = 'Dutch; fri; rr-';
+HWIDs = '2B6D3D6C7B9; 7C0505C3BFB; BFDCAA9C57D';
 
 // -------------------------------------------------------------------------------------------------------------------------
 // ----------[ END OF CONFIG ]--- DON'T TOUCH ANYTHING BELOW THIS LINE -----------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------------
 
-	cubeVersion = '1.5';
+cubeVersion = '1.6';
 
 type tbal = record
 	mode,           // used for delaying the messages and showing different ones, based on trigger
@@ -50,8 +116,8 @@ type tbal = record
 		integer;
 	numberMap,      // number of balances on current map
 	swaps,          // number of swaps on current map
-	tempAlphaScore, // used only if KeepTeamScore = true
-	tempBravoScore, // used only if KeepTeamScore = true
+	tempAlphaScore, // used only if KeepTeamScore is true
+	tempBravoScore, // used only if KeepTeamScore is true
 	maxBalances,    // used to limit the number of balances per trigger (safety measure)
 	smallerTeam:    // smaller team (calculated on every team change)
 		byte;
@@ -73,7 +139,7 @@ end;
 var
 	bal: tbal;                       // balance-related
 	pl: array [1..32] of tpl;        // player-related
-	MinDiff, SwapDiff: byte;      // minimum difference in team scores to balance if player diff = 1
+	MinDiff, SwapDiff: byte;         // minimum difference in team scores to balance if player diff = 1
 	exclusionlist: array of string;  // exploded list of nicks or hardware IDs excluded from balance
 
 
@@ -127,6 +193,7 @@ end;
 
 
 
+// oh god what's going on here
 function CalcWeakerTeam(noswap: boolean): byte;  // 0: teams are balanced,  1, 31: alpha is smaller,  2, 32: bravo is smaller,
 var intAlphaPlayers, intAlphaScore: integer;     // 11: swap best bravo with worst alpha,  12: swap best alpha with worst bravo,
 begin                                            // 21: move worst bravo to alpha,  22: move worst alpha to bravo.
@@ -150,10 +217,40 @@ begin                                            // 21: move worst bravo to alph
 	end else if (abs2(intAlphaPlayers-BravoPlayers) = 1) then begin // difference of one player: compare scores
 		if (abs2(intAlphaScore-BravoScore) < MinDiff) then begin
 			if (intAlphaPlayers > BravoPlayers) then result := 32 else result := 31; // used for onjoin check to move new player to smaller team.
-		end                                                                          // balance itself treats it as if teams were balanced.
+		end                                                                              // balance itself treats it as if teams were balanced.
 		else if (intAlphaPlayers > BravoPlayers) and (intAlphaScore > BravoScore) then result := 2
 		else if (intAlphaPlayers < BravoPlayers) and (intAlphaScore < BravoScore) then result := 1;
 	end;
+end;
+
+
+
+// cube info
+procedure ShowCubeInfo(caller: byte);
+begin
+	msg(caller, 'cube v' + cubeVersion + ' by fri  ::  Gamemode: ' + iif(GameStyle=3, 'CTF', 'Inf') + '  ::  Current settings:', false);
+	if (SwapCountsFlags) then msg(caller, 'SwapCntFlags =  true (swap will ignore players who capped the flag)', true);
+	if (KeepTeamScore) then msg(caller, 'KeepTeamScr  =  true (even if team is empty, its score is kept)', true);
+	case Exclusion of
+		0: msg(caller, 'Exclusion  =  0 (everyone is included in balance)', true);
+		1: msg(caller, 'Exclusion  =  1 (' + inttostr(GetArrayLength(exclusionlist)) + ' names excluded from balance)', true);
+		2: msg(caller, 'Exclusion  =  2 (' + inttostr(GetArrayLength(exclusionlist)) + ' hardware IDs excluded from balance)', true);
+		else msg(caller, 'Exclusion  =  ' + inttostr(Exclusion) + ' (ERROR: unknown mode, exclusion won''t work!)', false);
+	end;
+	case Method of
+		1: msg(caller, 'Method     =  1 (random player will be moved)', true);
+		2: msg(caller, 'Method     =  2 (player with the fewest kills will be moved)', true);
+		3: msg(caller, 'Method     =  3 (player with the fewest caps will be moved)', true);
+		4: msg(caller, 'Method     =  4 (player with the worst k/d ratio will be moved)', true);
+		5: msg(caller, 'Method     =  5 (player with fewest kills and no caps will be moved)', true);
+		6: msg(caller, 'Method     =  6 (player with worst k/d and no caps will be moved)', true);
+		7: msg(caller, 'Method     =  7 (random player with no caps will be moved)', true);
+		else msg(caller, 'Method     =  ' + inttostr(Method) + ' (ERROR: unknown method, balance won''t work!)', false);
+	end;
+	msg(caller, 'Interval   = ' + iif(Interval>9, '', ' ')   + inttostr(Interval)   + iif(Interval>0,   ' min (time between automatic balances)', ' (automatic balance is disabled)'), true);
+	msg(caller, 'ImmuneTime = ' + iif(ImmuneTime>9, '', ' ') + inttostr(ImmuneTime) + iif(ImmuneTime>0, ' min (player won''t be moved again until ' + inttostr(ImmuneTime) + ' min pass)', ' (disabled)'), true);
+	msg(caller, 'LockTime   = ' + iif(LockTime>9, '', ' ')   + inttostr(LockTime)   + iif(LockTime>0,   ' min (locking team of moved player for ' + inttostr(LockTime) + ' min)', ' (disabled)'), true);
+	msg(caller, 'Balances this run: ' + inttostr(bal.numberGlobal) + ' (' + inttostr(bal.numberMap) + ' on prev map)' + iif(bal.numberGlobal>0, ' | Last one was ' + iif(bal.lastbalance=32767, 'over 9 hours ago', inttostr(bal.lastbalance div 60) + ' min ' + inttostr(bal.lastbalance mod 60) + ' s ago'), ''), false);
 end;
 
 
@@ -209,29 +306,10 @@ begin
 		for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then pl[i].excluded := CheckExclusion(IDtoHW(i));
 	end;
 
-	// show remote admins some information
-	writeln('> cube v' + cubeVersion + ' by fri  ::  Gamemode: ' + iif(GameStyle=3, 'CTF', 'Inf') + '  ::  Current settings:');
-	if (KeepTeamScore) then writeln('> KeepTeamScr  =  true (even if team is empty, its score is kept)');
-	case Exclusion of
-		0: writeln('> Exclusion  =  0 (everyone is included in balance)');
-		1: writeln('> Exclusion  =  1 (' + inttostr(GetArrayLength(exclusionlist)) + ' names excluded from balance)');
-		2: writeln('> Exclusion  =  2 (' + inttostr(GetArrayLength(exclusionlist)) + ' hardware IDs excluded from balance)');
-		else writeln('> Exclusion  =  ' + inttostr(Exclusion) + ' (ERROR: unknown mode, exclusion won''t work!)');
-	end;
-	case Method of
-		1: writeln('> Method     =  1 (random player will be moved)');
-		2: writeln('> Method     =  2 (player with the fewest kills will be moved)');
-		3: writeln('> Method     =  3 (player with the fewest caps will be moved)');
-		4: writeln('> Method     =  4 (player with the worst k/d ratio will be moved)');
-		5: writeln('> Method     =  5 (player with fewest kills and no caps will be moved)');
-		6: writeln('> Method     =  6 (player with worst k/d and no caps will be moved)');
-		7: writeln('> Method     =  7 (random player with no caps will be moved)');
-		else writeln('> Method     =  ' + inttostr(Method) + ' (ERROR: unknown method, balance won''t work!)');
-	end;
-	writeln('> Interval   = ' + iif(Interval>9, '', ' ')   + inttostr(Interval)   + iif(Interval>0,   ' min (time between automatic balances)', ' (automatic balance is disabled)'));
-	writeln('> ImmuneTime = ' + iif(ImmuneTime>9, '', ' ') + inttostr(ImmuneTime) + iif(ImmuneTime>0, ' min (player won''t be moved again until ' + inttostr(ImmuneTime) + ' min pass)', ' (disabled)'));
-	writeln('> LockTime   = ' + iif(LockTime>9, '', ' ')   + inttostr(LockTime)   + iif(LockTime>0,   ' min (locking team of moved player for ' + inttostr(LockTime) + ' min)', ' (disabled)'));
-	writeconsole(0, 'cube v' + cubeVersion + ' recompiled. Happy balancing!', $FFFFAA00);
+	// show some information on recompile
+	ShowCubeInfo(255);
+	writeconsole(0, '       [ cube v' + cubeVersion + ' by fri ]', $FFFFCC55);
+	writeconsole(0, 'Script recompiled. Happy balancing!', $FFFFCC55);
 end;
 
 
@@ -282,12 +360,11 @@ var i: byte;
 		j, maxval, temp: integer;
 		player: array [1..32] of byte;
 begin
-
 	result := 0;
 
 	// create an array of players who may be moved
 	j := 0;
-	for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then if not (pl[i].excluded) then if (pl[i].immune = 0) then if (GetPlayerStat(i, 'Team') = team) then if (GetPlayerStat(i, 'Flagger') = false) then begin
+	for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then if not (pl[i].excluded) then if (pl[i].immune = 0) then if (GetPlayerStat(i, 'Team') = team) then if (GetPlayerStat(i, 'Flagger') = false) then if (GetPlayerStat(i, 'Human') = true) then begin
 		if (choosingmethod = 7) and (GetPlayerStat(i, 'Flags') > 0) then continue; // the seventh method ignores players who have caps
 		j := j + 1;
 		player[j] := i;
@@ -302,7 +379,7 @@ begin
 		// method 0: choose the player with the most kills AND no caps. if it fails, fewest caps (used for swapping best and weakest players)
 		0: begin
 				maxval := 0;
-				for i := 1 to j do if (GetPlayerStat(player[i], 'Flags') = 0) then begin
+				for i := 1 to j do if (((SwapCountsFlags) and (GetPlayerStat(player[i], 'Flags') = 0)) or (not SwapCountsFlags)) then begin
 					temp := GetPlayerStat(player[i], 'Kills');
 					if (temp >= maxval) then begin
 						maxval := temp;
@@ -403,7 +480,7 @@ begin
 	else begin
 		writeln('cube>  Everyone in ' + iif(team=1, 'Alpha', 'Bravo') + ' Team is immune to balance. Using alternative method.');
 		j := ImmuneTime * 60;
-		for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) and (GetPlayerStat(i, 'Team') = team) and (pl[i].immune <= j) then begin
+		for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then if (not pl[i].excluded) then if (GetPlayerStat(i, 'Team') = team) then if (pl[i].immune <= j) then if (GetPlayerStat(i, 'Human') = true) then begin
 			j := pl[i].immune; // new smallest time found
 			result := i;       // whose time was it?
 		end;
@@ -411,7 +488,7 @@ begin
 
 	// did something go wrong?
 	if (result = 0) then begin
-		writeln('cube>  ERROR - ChoosePlayer returned 0. cube refuses to work until you fix it.');
+		writeln('cube>  ChoosePlayer returned 0. Teams can''t be balanced. Probably everyone is excluded from balance.');
 		exit;
 	end;
 
@@ -420,7 +497,6 @@ begin
 
 	// set the lock timer to 0. it will be re-set after moving
 	if (LockTime > 0) then pl[result].lock := 0;
-
 end;
 
 
@@ -435,7 +511,6 @@ end;
 procedure Swap(caller, id1, id2: byte);
 var i: byte;
 begin
-
 	if (TimeLeft <= 10) then begin
 		if (caller = 255) or (caller = 0) then writeln('cube>  Less than 10 seconds left. Swap is blocked.') 
 			else writeconsole(caller, 'Less than 10 seconds left. Swap is blocked.', ColorRed);
@@ -444,7 +519,7 @@ begin
 
 	// swap all
 	if (id1 = 0) and (id2 = 0) then begin
-		for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then begin
+		for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then if (GetPlayerStat(i, 'Team') <= 2) then begin
 			pl[i].lock := 0;
 			pl[i].movedByScript := true;
 			command('/setteam' + iif(GetPlayerStat(i, 'Team') = 1, '2 ', '1 ') + inttostr(i));
@@ -486,8 +561,7 @@ begin
 		if (caller = 255) or (caller = 0) then writeln('cube>  Swap: something went wrong. Check the command and try again.') else writeconsole(caller, 'Something went wrong. Check the command and try again.', ColorRed);
 	end;
 
-	if (caller = 0) then writeconsole(0, 'Teams balanced (swapped best player with weakest one).', ColorGreen);
-
+	if (caller = 0) then writeconsole(0, 'Teams balanced bt swapping.' + ShowPlayers(), ColorGreen);
 end;
 
 
@@ -498,14 +572,13 @@ var intAlphaPlayers, intAlphaScore: integer; // we need to have AlphaPlayers and
 	stopBalance: boolean;
 	temp, pl1, pl2: byte;
 begin
-
 	// if current gamemode is not supported (neither ctf nor inf) then exit
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
 
 	// start counting down the time since last check
 	if (Interval > 0) then bal.lastcheck := Interval * 60;
 
-	// soldatserver 2.7.0 workaround
+	// soldatserver 2.7.0+ workaround
 	intAlphaPlayers := AlphaPlayers;
 	intAlphaScore := AlphaScore;
 	stopBalance := false;
@@ -547,7 +620,7 @@ begin
 	// no action
 	if (temp = 0) then begin
 		if (bal.mode = 0) and (not auto) then begin
-			writeconsole(0, 'Teams are fine, no need to balance.', ColorGreen);
+			writeconsole(0, 'Teams are fine, no need to balance.' + ShowPlayers(), ColorGreen);
 		end;
 		exit;
 	end;
@@ -555,7 +628,11 @@ begin
 	// regular balance
 	if (temp < 3) then begin
 		pl1 := ChoosePlayer(iif(temp=1, 2, 1), Method);
-		if (pl1 = 0) then exit;
+		if (pl1 = 0) then begin
+			writeconsole(0, 'Something went wrong. Maybe everyone is excluded from balance?', ColorRed);
+			writeconsole(0, 'Or there are multiple bots, which I can''t move? I quit. *sniff*', ColorRed);
+			exit;
+		end;
 		pl[pl1].movedByScript := true;
 		command('/setteam' + iif(temp=1, '1 ', '2 ') + inttostr(pl1));
 		if (bal.mode <> 2) then writeconsole(pl1, 'You were moved due to unbalanced teams.', ColorMsg);
@@ -567,8 +644,13 @@ begin
 
 		// swaps limit not reached, swap the players!
 		if (bal.swaps < SwapLimit) or (SwapLimit = 0) then begin
-			pl1 := ChoosePlayer(iif(temp=11, 2, 1), 0); // best player (most kills) with no caps, from the stronger team
-			pl2 := ChoosePlayer(iif(temp=11, 1, 2), 5); // weakest player (fewest kills) with no caps, from the opposite team
+		
+			// best player (most kills), from the stronger team
+			pl1 := ChoosePlayer(iif(temp=11, 2, 1), 0);
+			
+			// weakest player (fewest kills), from the opposite team
+			pl2 := ChoosePlayer(iif(temp=11, 1, 2), iif(SwapCountsFlags, 5, 2));
+			
 			Swap(0, pl1, pl2);
 			if (SwapLimit <> 0) then bal.swaps := bal.swaps + 1;
 
@@ -587,7 +669,7 @@ begin
 		// swaps limit reached, do nothing
 		end else begin
 			writeln('cube>  Swap would trigger now, but the SwapLimit (' + inttostr(SwapLimit) + ') is reached.');
-			if (bal.mode = 0) and (not auto) then writeconsole(0, 'Teams are fine, no need to balance.', ColorGreen);
+			if (bal.mode = 0) and (not auto) then writeconsole(0, 'Teams are fine, no need to balance.' + ShowPlayers(), ColorGreen);
 			exit;
 		end;
 
@@ -628,7 +710,6 @@ begin
 
 	// re-run the balance. maybe we need to transfer two players instead of one?
 	Balance(true, true);
-
 end;
 
 
@@ -639,7 +720,6 @@ var i, j, numpl, temp: byte;
 		intAlphaScore: integer;
 		player: array [1..32] of byte;
 begin
-
 	// this doesn't work for non-two-team gamemodes
 	if (GameStyle <> 3) and (GameStyle <> 5) and (GameStyle <> 6) then exit;
 
@@ -649,9 +729,9 @@ begin
 		exit;
 	end;
 
-	// create an array of online players and reset their lock time
+	// create an array of online players and reset their lock time. don't touch excluded players!
 	numpl := 0;
-	for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) and (GetPlayerStat(i, 'Team') <> 5) then begin
+	for i := 1 to 32 do if (GetPlayerStat(i, 'Active') = true) then if (GetPlayerStat(i, 'Team') <> 5) then if (not pl[i].excluded) then begin
 		numpl := numpl + 1;
 		player[numpl] := i;
 		pl[i].lock := 0;
@@ -681,7 +761,6 @@ begin
 	// make sure teams are balanced
 	bal.mode := 2;
 	Balance(true, true);
-
 end;
 
 
@@ -690,7 +769,6 @@ end;
 procedure AppOnIdle(ticks: integer);
 var i: byte;
 begin
-
 	if (ticks mod 60 <> 0) then exit; // compatibility fix for 60 Hz AppOnIdle
 
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
@@ -705,7 +783,7 @@ begin
 	if (bal.mode = 1) then begin
 		bal.mode := 0;
 		bal.maxBalances := 0;
-		writeconsole(0, 'Teams balanced.', ColorGreen);
+		writeconsole(0, 'Teams balanced.' + ShowPlayers(), ColorGreen);
 		writeln('cube>  Teams balanced. ' + ShowPlayers());
 	end;
 
@@ -741,7 +819,6 @@ begin
 		bal.justLeft := false;
 		bal.smallerTeam := CalcWeakerTeam(false) mod 10;
 	end;
-
 end;
 
 
@@ -750,7 +827,6 @@ end;
 procedure OnPlayerSpeak(id: byte; text: string);
 var temp: byte;
 begin
-
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
 
 	case lowercase(text) of
@@ -831,7 +907,6 @@ begin
 		end;
 
 	end; // end of switch
-
 end;
 
 
@@ -840,7 +915,6 @@ end;
 function OnCommand(id: byte; text: string): boolean;
 var i, temp: byte;
 begin
-
 	// kicking out all bots
 	if (lowercase(text) = '/kickbots') or (lowercase(text) = '/kickbot') then begin
 		temp := 0;
@@ -848,7 +922,7 @@ begin
 			temp := temp + 1;
 			Command('/kick ' + inttostr(i));
 		end;
-		if (temp = 0) then msg(id, 'There are no bots here!', false) else msg(id, 'Kicked out ' + inttostr(temp) + ' bots.', true);
+		if (temp = 0) then msg(id, 'There are no bots here!', false) else msg(0, 'Kicked out ' + inttostr(temp) + ' bot(s).', true);
 		exit;
 	end;
 
@@ -859,21 +933,46 @@ begin
 			temp := temp + 1;
 			Command('/kick ' + inttostr(i));
 		end;
-		if (temp = 0) then msg(id, 'There are no spectators here!', false) else msg(id, 'Kicked out ' + inttostr(temp) + ' spectators.', true);
+		if (temp = 0) then msg(id, 'There are no spectators here!', false) else msg(0, 'Kicked out ' + inttostr(temp) + ' spectator(s).', true);
 		exit;
 	end;
+	
+	if (lowercase(text) = '/cubeinfo') then ShowCubeInfo(id);
 
 	// returns hardware ID of specified player ID
 	if (lowercase(getpiece(text, ' ', 0)) = '/hwid') then begin 
-		if (length(text) > 6) then try
-			temp := strtoint(getpiece(text, ' ', 1));
-			if (GetPlayerStat(temp, 'Active') = true) then msg(id, 'ID: ' + inttostr(temp) + '  |  Name: ' + idtoname(temp) + '  |  ' + iif(GetPlayerStat(temp, 'Human') = true, 'HWID: ' + idtohw(temp), 'Bots don''t have HWIDs'), true)
-				else msg(id, 'There''s no player with ID ' + inttostr(temp) + ' here.', false);
-		except
-			msg(id, 'Not a number. Check the command and try again.', false);
-			exit;
+		if (length(text) > 6) then begin
+			try
+				temp := strtoint(getpiece(text, ' ', 1));
+			except
+				temp := nametoid(getpiece(text, ' ', 1));
+			end;
+			if (GetPlayerStat(temp, 'Active') = true) then
+				msg(id, 'ID: ' + inttostr(temp) + '  |  Name: ' + idtoname(temp) + '  |  ' + iif(GetPlayerStat(temp, 'Human') = true, 'HWID: ' + idtohw(temp), 'Bots don''t have HWIDs'), true)
+			else
+				msg(id, 'There''s no such player here.', false);
 		end else msg(id, 'Usage: [ /hwid ID ].' + iif(id = 255, '', ' To get player''s ID, press [F1] and then [/].'), false);
 		exit;
+	end;
+	
+	// exclude the specified player from cube's power
+	if (lowercase(getpiece(text, ' ', 0)) = '/exclude') then begin
+		if (length(text) > 9) then begin
+			try
+				temp := strtoint(getpiece(text, ' ', 1));
+			except
+				temp := nametoid(getpiece(text, ' ', 1));
+			end;
+			if (GetPlayerStat(temp, 'Active') = true) then begin
+				if (GetPlayerStat(temp, 'Human') = false) then begin
+					msg(id, 'cube does not move bots. No need to exclude them manually.', false);
+					exit;
+				end;
+				pl[id].excluded := true;
+				msg(id, 'Player [ ' + idtoname(temp) + ' ] is now excluded from balance.', true);
+			end else 
+				msg(id, 'There''s no such player here.', false);
+		end else msg(id, 'Usage: [ /exclude ID ] or [ /exclude nickname ].' + iif(id = 255, '', ' To get player''s ID, press [F1] and then [/].'), false);
 	end;
 
 	// balancing silently, with fewer restrictions
@@ -958,7 +1057,7 @@ end;
 // if someone doesn't want to be seen as a whiny wimp, he can use the silent method (/bal)
 function OnPlayerCommand(id: byte; text: string): boolean;
 begin
-	if (lowercase(text) = '/bal') then if (GetPlayerStat(id, 'Team') <> 5) then if ((GameStyle = 3) or (GameStyle = 5)) then begin
+	if (lowercase(text) = '/bal') then if (GetPlayerStat(id, 'Team') <> 5) then if ((GameStyle = 3) or (GameStyle = 5)) then if (bal.lastbalance > 0) then begin
 		if (TimeLeft <= 10) then begin
 			writeconsole(id, 'Less than 10 seconds left. Balance is disabled.', ColorRed);
 			exit;
@@ -980,7 +1079,6 @@ end;
 procedure OnMapChange(newmap: string);
 var i: byte;
 begin
-
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
 
 	// if you were curious why no spam shows up, this one should make it clear
@@ -1006,18 +1104,16 @@ begin
 		bal.tempAlphaScore := 0;
 		bal.tempBravoScore := 0;
 	end;
-
 end;
 
 
 
 procedure OnJoinTeam(id, team: byte);
 begin
-
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
 
-	// check whether the player is on the exclusion list
-	if (Exclusion > 0) then pl[id].excluded := CheckExclusion(iif(Exclusion = 1, IDtoName(id), IDtoHW(id)));
+	// check whether the player is on the exclusion list, but don't check again if he already is and just changes teams
+	if (Exclusion > 0) then if (not pl[id].excluded) then pl[id].excluded := CheckExclusion(iif(Exclusion = 1, IDtoName(id), IDtoHW(id)));
 
 	// if someone tries to join the stronger team then move him back (except he's on the exclusion list or was moved by cube)
 	if (not pl[id].movedByScript) then if (team <> 5) then if (not pl[id].excluded) then begin
@@ -1052,14 +1148,12 @@ begin
 	pl[id].movedByScript := false;
 
 	bal.smallerTeam := CalcWeakerTeam(true) mod 10;
-
 end;
 
 
 
 procedure OnLeaveGame(id, team: byte; kicked: boolean);
 begin
-
 	if (GameStyle <> 3) and (GameStyle <> 5) then exit;
 
 	pl[id].excluded := false;
@@ -1080,7 +1174,6 @@ begin
 	pl[id].triggers := 0;
 
 	bal.justLeft := true;
-
 end;
 
 

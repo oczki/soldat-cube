@@ -19,7 +19,6 @@ cube is a team balancer intended for use on public Soldat servers, for Capture T
 - admins can swap the teams of two or all players at once
 - you can exclude some people from the balance by putting their nicknames or HWIDs on the exclusion list
 - can keep teams' scores even if all players left (optional)
-- cube _always_ balances teams - putting everyone on the exclusion list wouldn't block it
 
 **Admin-only commands:**
 - **/swap _ID1_ _ID2_** - swap teams of two players
@@ -29,6 +28,8 @@ cube is a team balancer intended for use on public Soldat servers, for Capture T
 - **/kickspec** - kicks all spectators
 - **/gamemode _X_** - simplified this command to use 'dm', 'ctf', etc. instead of numbers that are hard to remember
 - **/hwid _ID_** - get player's hardware ID
+- **/exclude _ID_** - exclude specified player from balance
+- **/cubeinfo** - shows information about current cube's config
 
 **Some triggers for regular players:**
 - **!alpha**, **!1**, **!red**, ... - join Alpha Team
@@ -42,11 +43,17 @@ There's a lot of safety checks and anti-abuse limiters, but they're not complete
 
 ##Nickname / hardware ID exclusion
 
-You can tell cube to ignore users whose nickname or HWID matches one on the exclusion list. Those users won't be affected by balance unless everyone else had already been moved - in such cases players with lowest "immunity time" will be moved, and (most likely) that'll be the excluded ones. cube _always_ balances teams - excluding everyone wouldn't block it. Additionally, excluded players will be able to join any team and use team-related triggers without restrictions.
+You can tell cube to ignore users whose nickname or HWID matches one on the exclusion list. Those users won't be affected
+	by balance or shuffle.
 
-Entries should be separated with a semicolon followed with space. So 'Major; Soldier; Steins;Gate' will affect three players: Major, Soldier and Steins;Gate. Also, don't forget to put a semicolon at the end of the line ( Nicks = 'asdasadas'; ).
+	Additionally, excluded players will be able to join any team and use team-related triggers without restrictions.
 
-You can check any player's HWID using the admin-only command **/hwid _ID_**.
+	Entries should be separated with a semicolon followed with space. So 'Major; Soldier; Steins;Gate' will affect three players:
+	Major, Soldier and Steins;Gate. Also, don't forget to put a semicolon at the end of the line ( Nicks = 'asdsadas'; ).
+
+	You can check any player's HWID using the admin-only command **/hwid _ID_**.
+
+	You can also exclude players while in game, using **/exclude _ID_**. It will work until they leave the server.
 
 ##Changelog (pre-GitHub)
 
