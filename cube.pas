@@ -561,7 +561,7 @@ begin
 		if (caller = 255) or (caller = 0) then writeln('cube>  Swap: something went wrong. Check the command and try again.') else writeconsole(caller, 'Something went wrong. Check the command and try again.', ColorRed);
 	end;
 
-	if (caller = 0) then writeconsole(0, 'Teams balanced bt swapping.' + ShowPlayers(), ColorGreen);
+	if (caller = 0) then writeconsole(0, 'Teams balanced by swapping two players.' + ShowPlayers(), ColorGreen);
 end;
 
 
