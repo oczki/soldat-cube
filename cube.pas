@@ -561,7 +561,7 @@ begin
 		if (caller = 255) or (caller = 0) then writeln('cube>  Swap: something went wrong. Check the command and try again.') else writeconsole(caller, 'Something went wrong. Check the command and try again.', ColorRed);
 	end;
 
-	if (caller = 0) then writeconsole(0, 'Teams balanced by swapping two players.' + ShowPlayers(), ColorGreen);
+	if (caller = 0) then writeconsole(0, 'Teams balanced by swapping two players. ' + ShowPlayers(), ColorGreen);
 end;
 
 
@@ -620,7 +620,7 @@ begin
 	// no action
 	if (temp = 0) then begin
 		if (bal.mode = 0) and (not auto) then begin
-			writeconsole(0, 'Teams are fine, no need to balance.' + ShowPlayers(), ColorGreen);
+			writeconsole(0, 'Teams are fine, no need to balance. ' + ShowPlayers(), ColorGreen);
 		end;
 		exit;
 	end;
@@ -669,7 +669,7 @@ begin
 		// swaps limit reached, do nothing
 		end else begin
 			writeln('cube>  Swap would trigger now, but the SwapLimit (' + inttostr(SwapLimit) + ') is reached.');
-			if (bal.mode = 0) and (not auto) then writeconsole(0, 'Teams are fine, no need to balance.' + ShowPlayers(), ColorGreen);
+			if (bal.mode = 0) and (not auto) then writeconsole(0, 'Teams are fine, no need to balance. ' + ShowPlayers(), ColorGreen);
 			exit;
 		end;
 
@@ -783,7 +783,7 @@ begin
 	if (bal.mode = 1) then begin
 		bal.mode := 0;
 		bal.maxBalances := 0;
-		writeconsole(0, 'Teams balanced.' + ShowPlayers(), ColorGreen);
+		writeconsole(0, 'Teams balanced. ' + ShowPlayers(), ColorGreen);
 		writeln('cube>  Teams balanced. ' + ShowPlayers());
 	end;
 
