@@ -1,4 +1,4 @@
-// --- cube v1.6 --- advanced Soldat team balancer by fri [ http://oko.im ]
+// --- cube v1.6.1 --- advanced Soldat team balancer by fri [ http://oko.im ]
 
 const
 // -------------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ HWIDs = '2B6D3D6C7B9; 7C0505C3BFB; BFDCAA9C57D';
 // ----------[ END OF CONFIG ]--- DON'T TOUCH ANYTHING BELOW THIS LINE -----------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------------
 
-cubeVersion = '1.6';
+cubeVersion = '1.6.1';
 
 type tbal = record
 	mode,           // used for delaying the messages and showing different ones, based on trigger
@@ -379,7 +379,7 @@ begin
 		// method 0: choose the player with the most kills AND no caps. if it fails, fewest caps (used for swapping best and weakest players)
 		0: begin
 				maxval := 0;
-				for i := 1 to j do if (((SwapCountsFlags) and (GetPlayerStat(player[i], 'Flags') = 0)) or (not SwapCountsFlags)) then begin
+				for i := 1 to j do if ((not SwapCountsFlags) or (GetPlayerStat(player[i], 'Flags') = 0)) then begin
 					temp := GetPlayerStat(player[i], 'Kills');
 					if (temp >= maxval) then begin
 						maxval := temp;
