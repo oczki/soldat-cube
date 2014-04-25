@@ -968,7 +968,7 @@ begin
 					msg(id, 'cube does not move bots. No need to exclude them manually.', false);
 					exit;
 				end;
-				pl[id].excluded := true;
+				pl[temp].excluded := true;
 				msg(id, 'Player [ ' + idtoname(temp) + ' ] is now excluded from balance.', true);
 			end else 
 				msg(id, 'There''s no such player here.', false);
